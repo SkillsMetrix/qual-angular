@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-datadriven',
@@ -14,9 +14,9 @@ export class DatadrivenComponent {
   city:FormControl
 
   createFormControl(){
-    this.uname=new FormControl('')
-    this.pass=new FormControl('')
-    this.email=new FormControl('')
+    this.uname=new FormControl('',Validators.required)
+    this.pass=new FormControl('',)
+    this.email=new FormControl('',[Validators.required,this.emailDomainValidator])
     this.city=new FormControl('')
   }
   createForm(){
@@ -34,5 +34,19 @@ export class DatadrivenComponent {
   addUser(){
     console.log(this.myForm.value);
     
+  }
+  emailDomainValidator(control:FormControl){
+    let email=control.value
+    if(email && email.indexOf('@') !=-1){
+      let[before,after]=email.split('@')
+      if(after !=='qualcomm.com'){
+        return {
+          emailDomain:{
+            parseDomain:after
+          }
+        }
+      }
+    }
+    return null
   }
 }

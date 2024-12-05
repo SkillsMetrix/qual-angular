@@ -1,19 +1,38 @@
+import { Component } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 
-<div class="container">
-<div class="card">
-    <div class="card-header">
-      User Registration Form
-    </div>
-    <div class="card-body">
-        <form action="">
-            UserName: <input type="text" name="uname"/>
-            Password: <input type="password" name="pass"/>
-            Email: <input type="email" name="email"/>
-            City: <input type="text" name="city"/>
-            <button class="btn btn-primary" (click)="addUser()">Register</button>
+@Component({
+  selector: 'app-datadriven',
+  templateUrl: './datadriven.component.html',
+  styleUrl: './datadriven.component.css'
+})
+export class DatadrivenComponent {
+  myForm:FormGroup
+  uname:FormControl
+  pass:FormControl
+  email:FormControl
+  city:FormControl
 
-        </form>
-     
-    </div>
-  </div>
-</div>
+  createFormControl(){
+    this.uname=new FormControl('')
+    this.pass=new FormControl('')
+    this.email=new FormControl('')
+    this.city=new FormControl('')
+  }
+  createForm(){
+    this.myForm= new FormGroup({
+      uname:this.uname,
+      pass:this.pass,
+      email:this.email,
+      city:this.city
+    })
+  }
+  constructor(){
+    this.createFormControl()
+    this.createForm()
+  }
+  addUser(){
+    console.log(this.myForm.value);
+    
+  }
+}

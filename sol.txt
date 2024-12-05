@@ -1,0 +1,19 @@
+
+<div class="container">
+<div class="card">
+    <div class="card-header">
+      User Registration Form
+    </div>
+    <div class="card-body">
+        <form action="">
+            UserName: <input type="text" name="uname"/>
+            Password: <input type="password" name="pass"/>
+            Email: <input type="email" name="email"/>
+            City: <input type="text" name="city"/>
+            <button class="btn btn-primary" (click)="addUser()">Register</button>
+
+        </form>
+     
+    </div>
+  </div>
+</div>

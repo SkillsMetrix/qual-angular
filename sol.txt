@@ -1,52 +1,86 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-datadriven',
-  templateUrl: './datadriven.component.html',
-  styleUrl: './datadriven.component.css'
+  selector: 'app-formbuild',
+  templateUrl: './formbuild.component.html',
+  styleUrl: './formbuild.component.css'
 })
-export class DatadrivenComponent {
-  myForm:FormGroup
-  uname:FormControl
-  pass:FormControl
-  email:FormControl
-  city:FormControl
+export class FormbuildComponent {
 
-  createFormControl(){
-    this.uname=new FormControl('',Validators.required)
-    this.pass=new FormControl('',)
-    this.email=new FormControl('',[Validators.required,this.emailDomainValidator])
-    this.city=new FormControl('')
-  }
-  createForm(){
-    this.myForm= new FormGroup({
-      uname:this.uname,
-      pass:this.pass,
-      email:this.email,
-      city:this.city
+    errorMessages={
+      'uname':[
+        {type:'required',message:'username can not be null'}
+      ],
+      'email':[
+        {password:'required',message:'password cant be null'}
+      ]
+    }
+
+
+  myForm: FormGroup
+  constructor(private fb: FormBuilder) {
+    this.myForm = this.fb.group({
+      uname: new FormControl('', Validators.required),
+      pass: new FormControl('', [Validators.required, Validators.min(6)]),
+      email: new FormControl('', [Validators.required, this.emailDomainValidator]),
+      city: new FormControl('')
     })
   }
-  constructor(){
-    this.createFormControl()
-    this.createForm()
-  }
-  addUser(){
-    console.log(this.myForm.value);
-    
-  }
-  emailDomainValidator(control:FormControl){
-    let email=control.value
-    if(email && email.indexOf('@') !=-1){
-      let[before,after]=email.split('@')
-      if(after !=='qualcomm.com'){
+  emailDomainValidator(control: FormControl) {
+    let email = control.value
+    if (email && email.indexOf('@') != -1) {
+      let [before, after] = email.split('@')
+      if (after !== 'qualcomm.com') {
         return {
-          emailDomain:{
-            parseDomain:after
+          emailDomain: {
+            parseDomain: after
           }
         }
       }
     }
     return null
   }
+  addUser() {
+    console.log(this.myForm.value);
+
+  }
 }
+---
+
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            User Registration Form
+        </div>
+        <div class="card-body">
+            <form (ngSubmit)="addUser( )" [formGroup]="myForm">
+                UserName: <input type="text" formControlName="uname" />
+
+                <div>
+                 <ng-container *ngFor="let error of errorMessages.uname">
+                    <div *ngIf="myForm.get('uname').errors?.['required']">
+                        {{error.message}}
+                    </div>
+                 </ng-container>
+                </div>
+
+                Password: <input type="password" formControlName="pass" />
+                Email: <input type="email" formControlName="email" />
+
+                <div *ngIf="myForm.get('email').invalid && (myForm.get('email').dirty || myForm.get('email').touched)">
+                    <div *ngIf="myForm.get('email').errors?.['required']">Email cant be blank</div>
+                    <div *ngIf="myForm.get('email').errors?.['emailDomain']">Email must be qualcomm.com</div>
+                </div>
+
+                City: <input type="text" formControlName="city" />
+                <button class="btn btn-primary">Register</button>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>

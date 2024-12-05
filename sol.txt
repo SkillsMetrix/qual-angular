@@ -1,86 +1,154 @@
+<div class="container">
+
+	<div style="margin: 30px">
+		<h1 class="ion-text-center">Register</h1>
+
+		<form [formGroup]="loginForm">
+			<div class="form-group">
+				<label>First Name*</label>
+				<input class="form-control" formControlName="fname" type="text" />
+			</div>
+			<div class="error-messages">
+				<ng-container *ngFor="let error of error_messages.fname">
+					<div class="error-message" *ngIf="loginForm.get('fname').hasError(error.type) && (loginForm.get('fname').dirty || loginForm.get('fname').touched)">
+						{{ error.message }}
+					</div>
+				</ng-container>
+			</div>
+
+			<div class="form-group">
+				<label>Last Name*</label>
+				<input class="form-control" formControlName="lname" type="text" />
+			</div>
+			<div class="error-messages">
+				<ng-container *ngFor="let error of error_messages.lname">
+					<div class="error-message" *ngIf="loginForm.get('lname').hasError(error.type) && (loginForm.get('lname').dirty || loginForm.get('lname').touched)">
+						{{ error.message }}
+					</div>
+				</ng-container>
+			</div>
+
+			<div class="form-group">
+				<label>Email Id*</label>
+				<input class="form-control" formControlName="email" type="text" />
+			</div>
+			<div class="error-messages">
+				<ng-container *ngFor="let error of error_messages.email">
+					<div class="error-message" *ngIf="loginForm.get('email').hasError(error.type) && 
+    (loginForm.get('email').dirty || loginForm.get('email').touched)">
+						{{ error.message }}
+					</div>
+				</ng-container>
+			</div>
+
+			<div class="form-group">
+				<label>Password*</label>
+				<input class="form-control" formControlName="password" type="password" />
+			</div>
+			<div class="error-messages">
+				<ng-container *ngFor="let error of error_messages.password">
+					<div class="error-message" *ngIf="loginForm.get('password').hasError(error.type) && (loginForm.get('password').dirty || loginForm.get('password').touched)">
+						{{ error.message }}
+					</div>
+				</ng-container>
+			</div>
+
+			<div class="form-group">
+				<label>Confirm Password*</label>
+				<input class="form-control" formControlName="confirmpassword" type="password" />
+			</div>
+			<div class="error-messages">
+				<ng-container *ngFor="let error of error_messages.confirmpassword">
+					<div class="error-message" *ngIf="loginForm.get('confirmpassword').hasError(error.type) && (loginForm.get('confirmpassword').dirty || loginForm.get('confirmpassword').touched)">
+						{{ error.message }}
+					</div>
+				</ng-container>
+			</div>
+      <pre>
+        Form Error - {{ loginForm.errors | json }}
+      </pre>
+			<button class="form-control btn btn-primary" [disabled]="!loginForm.valid">Signup</button>
+		</form>
+	</div>
+</div>
+--------
+
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-formbuild',
-  templateUrl: './formbuild.component.html',
-  styleUrl: './formbuild.component.css'
+  selector: 'my-app',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class FormbuildComponent {
+export class AppComponent {
+  loginForm: FormGroup;
 
-    errorMessages={
-      'uname':[
-        {type:'required',message:'username can not be null'}
-      ],
-      'email':[
-        {password:'required',message:'password cant be null'}
-      ]
-    }
+  error_messages = {
+    'fname': [
+      { type: 'required', message: 'First Name is required.' },
+    ],
 
+    'lname': [
+      { type: 'required', message: 'Last Name is required.' }
+    ],
 
-  myForm: FormGroup
-  constructor(private fb: FormBuilder) {
-    this.myForm = this.fb.group({
-      uname: new FormControl('', Validators.required),
-      pass: new FormControl('', [Validators.required, Validators.min(6)]),
-      email: new FormControl('', [Validators.required, this.emailDomainValidator]),
-      city: new FormControl('')
-    })
+    'email': [
+      { type: 'required', message: 'Email is required.' },
+      { type: 'minlength', message: 'Email length.' },
+      { type: 'maxlength', message: 'Email length.' },
+      { type: 'required', message: 'please enter a valid email address.' }
+    ],
+
+    'password': [
+      { type: 'required', message: 'password is required.' },
+      { type: 'minlength', message: 'password length.' },
+      { type: 'maxlength', message: 'password length.' }
+    ],
+    'confirmpassword': [
+      { type: 'required', message: 'password is required.' },
+      { type: 'minlength', message: 'password length.' },
+      { type: 'maxlength', message: 'password length.' }
+    ],
   }
-  emailDomainValidator(control: FormControl) {
-    let email = control.value
-    if (email && email.indexOf('@') != -1) {
-      let [before, after] = email.split('@')
-      if (after !== 'qualcomm.com') {
-        return {
-          emailDomain: {
-            parseDomain: after
-          }
-        }
-      }
-    }
-    return null
-  }
-  addUser() {
-    console.log(this.myForm.value);
 
+  constructor(
+    public formBuilder: FormBuilder
+  ) {
+    this.loginForm = this.formBuilder.group({
+      fname: new FormControl('', Validators.compose([
+        Validators.required
+      ])),
+      lname: new FormControl('', Validators.compose([
+        Validators.required
+      ])),
+      email: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(30)
+      ])),
+      password: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(30)
+      ])),
+      confirmpassword: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(30)
+      ])),
+    }, { 
+      validators: this.password.bind(this)
+    });
   }
+
+  ngOnInit() {
+  }
+
+  password(formGroup: FormGroup) {
+    const { value: password } = formGroup.get('password');
+    const { value: confirmPassword } = formGroup.get('confirmpassword');
+    return password === confirmPassword ? null : { passwordNotMatch: true };
+  }
+
 }
----
-
-
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            User Registration Form
-        </div>
-        <div class="card-body">
-            <form (ngSubmit)="addUser( )" [formGroup]="myForm">
-                UserName: <input type="text" formControlName="uname" />
-
-                <div>
-                 <ng-container *ngFor="let error of errorMessages.uname">
-                    <div *ngIf="myForm.get('uname').errors?.['required']">
-                        {{error.message}}
-                    </div>
-                 </ng-container>
-                </div>
-
-                Password: <input type="password" formControlName="pass" />
-                Email: <input type="email" formControlName="email" />
-
-                <div *ngIf="myForm.get('email').invalid && (myForm.get('email').dirty || myForm.get('email').touched)">
-                    <div *ngIf="myForm.get('email').errors?.['required']">Email cant be blank</div>
-                    <div *ngIf="myForm.get('email').errors?.['emailDomain']">Email must be qualcomm.com</div>
-                </div>
-
-                City: <input type="text" formControlName="city" />
-                <button class="btn btn-primary">Register</button>
-
-
-
-            </form>
-
-        </div>
-    </div>
-</div>

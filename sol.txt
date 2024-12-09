@@ -1,41 +1,70 @@
-\import { Injectable } from '@angular/core';
-import { createEffect, Actions, ofType } from '@ngrx/effects';
-import { EmptyError } from 'rxjs';
-import { catchError, concatMap, exhaustMap, map, tap } from 'rxjs/operators';
+
+
+import { createAction } from '@ngrx/store'
+import { Movie } from 'src/app/Models/movie';
+
+export const getMovies=createAction('[Movie] get movie');
+
+export const getMovieSuccess=createAction('[Movie] load movie ',(movies:ReadonlyArray<Movie>)=>({movies}));
+export const addMovies=createAction('[Movie] add movie',(movie:Movie)=>(movie));
+export const addMoviesSuccess=createAction('[Movie] add movie Success',(movie:Movie)=>({movie}));
+
+
+
+---------
+
+
+
+import{ createReducer, on } from '@ngrx/store'
+import { Movie } from 'src/app/Models/movie'
+import { addMoviesSuccess, getMovieSuccess } from '../Actions/movie.action'
+ 
+export interface MovieState{
+    movies: ReadonlyArray<Movie>
+}
+
+const initialState: ReadonlyArray<Movie>=[]
+
+export const movieReducer=createReducer(
+    initialState,
+    on(getMovieSuccess,(state,{movies})=> [...movies]),
+    on(addMoviesSuccess,(state,{movie})=> [...state,movie])
+)
+
+
+-------------
+
+import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { DataService } from 'src/app/Service/data.service';
-import {
-  getMovies,
-  getMoviesSuccess,
-  addMovies,
-  addMoviesSuccess,
-} from '../Actions/movie.action';
+ import { concatMap, exhaustMap, map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { addMovies, addMoviesSuccess, getMovies, getMovieSuccess } from '../Actions/movie.action';
 
 @Injectable()
-export class MovieEffects {
-  loadMovie$ = createEffect(() =>
-    this.action$.pipe(
-      ofType(getMovies),
-      exhaustMap(() =>
-        this.dataService.getMovies().pipe(
-          map((movies) => getMoviesSuccess(movies)),
-          
+export class MovieEffect {
+    loadMovies$ = createEffect(() =>
+        this.action$.pipe(
+            ofType(getMovies),
+            exhaustMap(() =>
+                this.ds.getMovies().pipe(
+                    map((movies) => getMovieSuccess(movies))
+                )
+            )
         )
-      )
     )
-  );
 
-  addMovie$ = createEffect(() =>
-    this.action$.pipe(
-      ofType(addMovies),
-      tap((movie) => console.log(movie)),
-      concatMap(({ movie }) =>
-        this.dataService.addMovies(movie).pipe(
-          map((newMovie) => addMoviesSuccess(newMovie)),
-          
+    addMovie$ = createEffect(() =>
+        this.action$.pipe(
+            ofType(addMovies),
+            concatMap((movie ) =>
+                this.ds.addMovies(movie).pipe(
+                    map((newMovie) => addMoviesSuccess(newMovie))
+                )
+            )
+
         )
-      )
-    )
-  );
 
-  constructor(private action$: Actions, private dataService: DataService) {}
+    )
+
+    constructor(private action$: Actions, private ds: DataService) { }
 }

@@ -18,7 +18,7 @@ export class MovieEffects {
       exhaustMap(() =>
         this.dataService.getMovies().pipe(
           map((movies) => getMoviesSuccess(movies)),
-          catchError(() => EmptyError)
+          
         )
       )
     )
@@ -31,7 +31,7 @@ export class MovieEffects {
       concatMap(({ movie }) =>
         this.dataService.addMovies(movie).pipe(
           map((newMovie) => addMoviesSuccess(newMovie)),
-          catchError(() => EmptyError)
+          
         )
       )
     )

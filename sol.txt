@@ -1,8 +1,44 @@
- "build": {
-    "appId": "software.cantrips",
-    "productName": "SoftwareCants",
-    "mac": {
-      "category": "public.app-category.developer-tools"
-    },
-    "files": ["**/*", "dist/elec-ang/browser/**"]
-  }
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Full Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                {{firstName}}
+            </td>
+            <td>
+                {{lastName}}
+            </td>
+            <td>
+                {{fullName}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" [value]="firstName" #fname placeholder="Change First Name">
+                    <button (click)="changeFirstName(fname.value)" class="btn btn-outline-primary" type="button">
+                        Change First Name
+                    </button>
+                </div>
+                
+            </td>
+            <td>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" [value]="lastName" #lname placeholder="Change Last Name">
+                    <button (click)="changeLastName(lname.value)" class="btn btn-outline-primary" type="button">
+                        Change Last Name
+                    </button>
+                </div>
+            </td>
+            <td>
+            </td>
+        </tr>
+    </tbody>
+    
+</table>

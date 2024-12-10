@@ -1,44 +1,46 @@
-<table class="table">
-    <thead>
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Full Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                {{firstName}}
-            </td>
-            <td>
-                {{lastName}}
-            </td>
-            <td>
-                {{fullName}}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" [value]="firstName" #fname placeholder="Change First Name">
-                    <button (click)="changeFirstName(fname.value)" class="btn btn-outline-primary" type="button">
-                        Change First Name
-                    </button>
-                </div>
-                
-            </td>
-            <td>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" [value]="lastName" #lname placeholder="Change Last Name">
-                    <button (click)="changeLastName(lname.value)" class="btn btn-outline-primary" type="button">
-                        Change Last Name
-                    </button>
-                </div>
-            </td>
-            <td>
-            </td>
-        </tr>
-    </tbody>
-    
-</table>
+// Karma configuration file, see link for more information
+// https://karma-runner.github.io/1.0/config/configuration-file.html
+
+module.exports = function (config) {
+  config.set({
+    basePath: '',
+    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-chrome-launcher'),
+      require('karma-jasmine-html-reporter'),
+      require('karma-coverage'),
+      require('@angular-devkit/build-angular/plugins/karma'),
+      require('karma-htmlfile-reporter')
+    ],
+    client: {
+      jasmine: {
+        // you can add configuration options for Jasmine here
+        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
+        // for example, you can disable the random execution with `random: false`
+        // or set a specific seed with `seed: 4321`
+      },
+    },
+    jasmineHtmlReporter: {
+      suppressAll: true // removes the duplicated traces
+    },
+    coverageReporter: {
+      dir: require('path').join(__dirname, './coverage/test-app'),
+      subdir: '.',
+      reporters: [
+        { type: 'html' },
+        { type: 'text-summary' }
+      ]
+    },
+    reporters: ['progress', 'kjhtml'],
+    reporters:['progress','html'],
+    htmlReporter:{
+      outputFile:'testdata/units.html',
+      pageTitle:'My Custom Report',
+      subPageTitle: 'Qualcomm Test Report',
+      useLegacyStyle: true
+    },
+    browsers: ['Chrome'],
+    restartOnFileChange: true
+  });
+};

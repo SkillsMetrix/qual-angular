@@ -26,7 +26,39 @@ function createWindow() {
       slashes: true,
     })
   );
+---------------------------------
 
+
+const fs = require("fs");
+const path = require("path");
+
+btnCreate = document.getElementById("btnCreate");
+btnRead = document.getElementById("btnRead");
+btnDelete = document.getElementById("btnDelete");
+
+fileName = document.getElementById("fileName");
+fileContents = document.getElementById("fileContents");
+
+let pathname = path.join(__dirname, "Files");
+btnCreate.addEventListener("click", function () {
+  let file = path.join(pathname, fileName.value);
+  let contents = fileContents.value;
+  fs.writeFile(file, contents, function (err) {
+    if (err) {
+      return console.log(err);
+    }
+    console.log("File is saved");
+  });
+});
+
+btnRead.addEventListener('click', function(){
+    let file=path.join(pathname,fileName.value)
+    fs.readFile(file,function(err,data){
+        fileContents.value=data
+        console.log('The file was read');
+        
+    })
+})
   win.webContents.openDevTools();
 
   win.on("closed", () => {

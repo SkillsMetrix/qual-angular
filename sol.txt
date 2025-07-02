@@ -1,46 +1,57 @@
-// Karma configuration file, see link for more information
-// https://karma-runner.github.io/1.0/config/configuration-file.html
+const express = require("express");
+const bodyparser = require("body-parser");
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
+ 
 
-module.exports = function (config) {
-  config.set({
-    basePath: '',
-    frameworks: ['jasmine', '@angular-devkit/build-angular'],
-    plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma'),
-      require('karma-htmlfile-reporter')
-    ],
-    client: {
-      jasmine: {
-        // you can add configuration options for Jasmine here
-        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
-        // for example, you can disable the random execution with `random: false`
-        // or set a specific seed with `seed: 4321`
-      },
-    },
-    jasmineHtmlReporter: {
-      suppressAll: true // removes the duplicated traces
-    },
-    coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/test-app'),
-      subdir: '.',
-      reporters: [
-        { type: 'html' },
-        { type: 'text-summary' }
-      ]
-    },
-    reporters: ['progress', 'kjhtml'],
-    reporters:['progress','html'],
-    htmlReporter:{
-      outputFile:'testdata/units.html',
-      pageTitle:'My Custom Report',
-      subPageTitle: 'Qualcomm Test Report',
-      useLegacyStyle: true
-    },
-    browsers: ['Chrome'],
-    restartOnFileChange: true
+const app = express();
+const PORT = 3000;
+const SECRET_KEY = "kigcoind78yu234";
+app.use(cors());
+app.use(bodyparser.json());
+
+//mocking the dummy users
+const users = [
+  { id: 1, username: "user1", password: "123456" },
+  { id: 2, username: "user2", password: "123456" },
+];
+// create endpoints
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(
+    (u) => u.username === username && u.password === password
+  );
+  if (user) {
+    //create a token
+    const token = jwt.sign({ userid: user.id }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+    res.json({
+      message: "Authentication Successfull...!",
+      token,
+    });
+  } else {
+    res.status(401).json({ message: "Authentication Failed..!" });
+  }
+});
+//access Protected Route
+app.get("/api/protected", authenticationUser, (req, res) => {
+  res.json({
+    message: "Authentication Successfull and Safe to access...!",
+    user: req.user,
   });
-};
+});
+function authenticationUser(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token)   return res.sendStatus(401);
+  jwt.verify(token, SECRET_KEY, (error, user) => {
+    if (error) return res.sendStatus(403);
+    req, (user = user);
+    next();
+  });
+}
+app.listen(PORT,()=>{
+    console.log('server is ready');
+    
+})

@@ -1,57 +1,39 @@
-const express = require("express");
-const bodyparser = require("body-parser");
-const jwt = require("jsonwebtoken");
-const cors = require("cors");
- 
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
-const app = express();
-const PORT = 3000;
-const SECRET_KEY = "kigcoind78yu234";
-app.use(cors());
-app.use(bodyparser.json());
-
-//mocking the dummy users
-const users = [
-  { id: 1, username: "user1", password: "123456" },
-  { id: 2, username: "user2", password: "123456" },
-];
-// create endpoints
-app.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(
-    (u) => u.username === username && u.password === password
-  );
-  if (user) {
-    //create a token
-    const token = jwt.sign({ userid: user.id }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
-    res.json({
-      message: "Authentication Successfull...!",
-      token,
-    });
-  } else {
-    res.status(401).json({ message: "Authentication Failed..!" });
-  }
-});
-//access Protected Route
-app.get("/api/protected", authenticationUser, (req, res) => {
-  res.json({
-    message: "Authentication Successfull and Safe to access...!",
-    user: req.user,
-  });
-});
-function authenticationUser(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (!token)   return res.sendStatus(401);
-  jwt.verify(token, SECRET_KEY, (error, user) => {
-    if (error) return res.sendStatus(403);
-    req, (user = user);
-    next();
-  });
-}
-app.listen(PORT,()=>{
-    console.log('server is ready');
-    
+@Injectable({
+  providedIn: 'root'
 })
+export class LoginService {
+ API_URL='http://localhost:3000/api/login'
+ private loggedIn= new BehaviorSubject<boolean>(false)
+
+  constructor(private http:HttpClient,private route:Router) { }
+  loginUser(userdata:any){
+      return this.http.post(this.API_URL,userdata).pipe(
+        tap((res:any)=>{
+          if(res.token){
+              console.log(res.token);
+              localStorage.setItem('token',res.token)
+              this.loggedIn.next(true)
+          }
+        })
+      )
+  }
+  getToken(){
+    return localStorage.getItem('token')
+
+  }
+  isLoggedIn(){
+    return this.loggedIn.asObservable()
+  }
+  checkToken(){
+    const token= this.getToken()
+    this.loggedIn.next(!!token)
+  }
+  getProtectedData():Observable<any>{
+      return this.http.get('http://localhost:3000/api/protected')
+  }
+}

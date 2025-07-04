@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { ChartConfiguration, ChartType } from 'chart.js';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html'
+  selector: 'app-chartcomp',
+  templateUrl: './chartcomp.component.html',
+  styleUrl: './chartcomp.component.css'
 })
-export class AppComponent {
+export class ChartcompComponent {
+
   // Chart type
   public chartType: ChartType = 'bar';
 
@@ -39,3 +41,18 @@ export class AppComponent {
     }
   };
 }
+
+
+------
+
+
+
+<div style="display: block;">
+
+    <canvas 
+    baseChart
+    [data]="chartData"
+    [type]="chartType"
+    [options]="chartOptions">
+</canvas>
+</div>

@@ -2,36 +2,40 @@ import { Component } from '@angular/core';
 import { ChartConfiguration, ChartType } from 'chart.js';
 
 @Component({
-  selector: 'app-chartcomp',
-  templateUrl: './chartcomp.component.html',
-  styleUrl: './chartcomp.component.css'
+  selector: 'app-root',
+  templateUrl: './app.component.html'
 })
-export class ChartcompComponent {
+export class AppComponent {
+  // Chart type
+  public chartType: ChartType = 'bar';
 
-  public chartType:ChartType='bar'
-  public chartData: ChartConfiguration['data']={
-    datasets:[
-      {
-      data: [45,25,60,30],
-      label :'Company Sales',
-      backgroundColor: 'pink',
-      borderColor:'red',
-      borderWidth: 1
+   
+  public chartData: ChartConfiguration['data'] = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+    datasets: [
+      { 
+        data: [45, 25, 60, 30], 
+        label: 'Sales', 
+        backgroundColor: '#42A5F5',
+        borderColor: '#1E88E5',
+        borderWidth: 1
       }
     ]
-  }
+  };
+
+  
   public chartOptions: ChartConfiguration['options'] = {
     responsive: true,
-    plugins:{
-      legend:{
+    plugins: {
+      legend: {
         display: true,
-        position: 'top'
+        position: 'top',
       }
     },
-    scales:{
+    scales: {
       y: {
         beginAtZero: true
       }
     }
-  }
+  };
 }

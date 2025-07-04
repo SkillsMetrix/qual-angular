@@ -1,78 +1,22 @@
-import { TestBed } from '@angular/core/testing';
-import { RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
-
-describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([])
-      ],
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
-  });
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'test-app'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('test-app');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, test-app');
-  });
-  it('check the array',()=>{
-     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    app.users=[
-      {name:'admin'},{name:'manager'}
-    ]
-    fixture.detectChanges()
-    const container=fixture.nativeElement.querySelector('#user-container')
-    const listItems= container.querySelectorAll('li')
-    expect(listItems.length).toBe(2)
-    expect(listItems[0].textContent).toContain('admin')
-      expect(listItems[1].textContent).toContain('manager')
-
-  })
-  it('check the p value',()=>{
-     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-     
-    fixture.detectChanges()
-    const container=fixture.nativeElement.querySelector('p')
-    expect(container).toBeTruthy()
-    expect(container.textContent).toContain('NO User Found')
-
-  })
-});
+import { HttpClient } from "@angular/common/http"
+import { Injectable } from "@angular/core"
+import { Observable } from "rxjs"
 
 
+export interface Post{
+    userId:number
+    id:number
+    title: string
+    body: string
+}
+@Injectable({
+    providedIn: 'root'
+})
+export class PostService{
+    private apiURL='https://jsonplaceholder.typicode.com/posts'
 
----
-
-
-
-<h1>Hello, {{title}}</h1>
-
-
-
-<div id="user-container">
-<ul *ngIf="users.length >0; else nouser">
-    <li *ngFor="let user of users">{{user.name}}</li>
-</ul>
-</div>
-<ng-template #nouser>
-    <p>NO User Found</p>
-</ng-template>
+    constructor(private http:HttpClient){}
+    getPosts():Observable<Post[]>{
+        return this.http.get<Post[]>(this.apiURL)
+    }
+}

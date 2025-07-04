@@ -1,22 +1,25 @@
-import { HttpClient } from "@angular/common/http"
-import { Injectable } from "@angular/core"
-import { Observable } from "rxjs"
+import { of } from "rxjs";
+import { Post } from "./Post.service";
 
 
-export interface Post{
-    userId:number
-    id:number
-    title: string
-    body: string
-}
-@Injectable({
-    providedIn: 'root'
-})
-export class PostService{
-    private apiURL='https://jsonplaceholder.typicode.com/posts'
 
-    constructor(private http:HttpClient){}
-    getPosts():Observable<Post[]>{
-        return this.http.get<Post[]>(this.apiURL)
+export class MockService{
+
+    private mockPosts:Post[]=[
+        {
+            userId:1,
+            id:101,
+            title:'mock title',
+            body: 'demo data'
+        },
+        {
+            userId:2,
+            id:102,
+            title:'mock title2',
+            body: 'demo data2'
+        }
+    ]
+    getPosts(){
+        return of(this.mockPosts)
     }
 }

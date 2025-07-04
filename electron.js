@@ -6,17 +6,18 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      nodeIntegration: true
     }
   });
 
-  // Replace this project name based on your actual build folder name
-  const appPath = path.join(__dirname, 'dist', 'angular-electron-app', 'index.html');
-  win.loadFile(appPath);
+  // IMPORTANT: change folder name if your Angular project is named differently
+  const indexPath = path.join(__dirname, 'dist', 'angular-electron-app', 'index.html');
+  console.log('Loading Angular from:', indexPath);
+  
+  win.loadFile(indexPath);  // <-- Loads Angular build output
 
-  // Optional: open DevTools to debug if blank screen
-  // win.webContents.openDevTools();
+  // win.webContents.openDevTools(); // Uncomment to see devtools if blank screen
 }
 
 app.whenReady().then(createWindow);

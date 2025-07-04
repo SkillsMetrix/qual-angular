@@ -40,10 +40,39 @@ describe('AppComponent', () => {
     ]
     fixture.detectChanges()
     const container=fixture.nativeElement.querySelector('#user-container')
-    const listItems= container.querySelector('li')
+    const listItems= container.querySelectorAll('li')
     expect(listItems.length).toBe(2)
     expect(listItems[0].textContent).toContain('admin')
       expect(listItems[1].textContent).toContain('manager')
 
   })
+  it('check the p value',()=>{
+     const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+     
+    fixture.detectChanges()
+    const container=fixture.nativeElement.querySelector('p')
+    expect(container).toBeTruthy()
+    expect(container.textContent).toContain('NO User Found')
+
+  })
 });
+
+
+
+---
+
+
+
+<h1>Hello, {{title}}</h1>
+
+
+
+<div id="user-container">
+<ul *ngIf="users.length >0; else nouser">
+    <li *ngFor="let user of users">{{user.name}}</li>
+</ul>
+</div>
+<ng-template #nouser>
+    <p>NO User Found</p>
+</ng-template>

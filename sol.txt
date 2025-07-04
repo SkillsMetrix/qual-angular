@@ -1,25 +1,37 @@
-import { of } from "rxjs";
-import { Post } from "./Post.service";
+import { Component } from '@angular/core';
+import { ChartConfiguration, ChartType } from 'chart.js';
 
+@Component({
+  selector: 'app-chartcomp',
+  templateUrl: './chartcomp.component.html',
+  styleUrl: './chartcomp.component.css'
+})
+export class ChartcompComponent {
 
-
-export class MockService{
-
-    private mockPosts:Post[]=[
-        {
-            userId:1,
-            id:101,
-            title:'mock title',
-            body: 'demo data'
-        },
-        {
-            userId:2,
-            id:102,
-            title:'mock title2',
-            body: 'demo data2'
-        }
+  public chartType:ChartType='bar'
+  public chartData: ChartConfiguration['data']={
+    datasets:[
+      {
+      data: [45,25,60,30],
+      label :'Company Sales',
+      backgroundColor: 'pink',
+      borderColor:'red',
+      borderWidth: 1
+      }
     ]
-    getPosts(){
-        return of(this.mockPosts)
+  }
+  public chartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins:{
+      legend:{
+        display: true,
+        position: 'top'
+      }
+    },
+    scales:{
+      y: {
+        beginAtZero: true
+      }
     }
+  }
 }

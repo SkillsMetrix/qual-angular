@@ -1,27 +1,37 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+import { Component } from '@angular/core';
+import { ChartConfiguration, ChartType } from 'chart.js';
 
-function createWindow() {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      contextIsolation: false,
-      nodeIntegration: true
+@Component({
+  selector: 'app-chartcomp',
+  templateUrl: './chartcomp.component.html',
+  styleUrl: './chartcomp.component.css'
+})
+export class ChartcompComponent {
+
+  public chartType:ChartType='bar'
+  public chartData: ChartConfiguration['data']={
+    datasets:[
+      {
+      data: [45,25,60,30],
+      label :'Company Sales',
+      backgroundColor: 'pink',
+      borderColor:'red',
+      borderWidth: 1
+      }
+    ]
+  }
+  public chartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins:{
+      legend:{
+        display: true,
+        position: 'top'
+      }
+    },
+    scales:{
+      y: {
+        beginAtZero: true
+      }
     }
-  });
-
-  // IMPORTANT: change folder name if your Angular project is named differently
-  const indexPath = path.join(__dirname, 'dist', 'angular-electron-app', 'index.html');
-  console.log('Loading Angular from:', indexPath);
-  
-  win.loadFile(indexPath);  // <-- Loads Angular build output
-
-  // win.webContents.openDevTools(); // Uncomment to see devtools if blank screen
+  }
 }
-
-app.whenReady().then(createWindow);
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});

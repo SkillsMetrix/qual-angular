@@ -1,39 +1,64 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import { AppComponent } from './app.component';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class LoginService {
- API_URL='http://localhost:3000/api/login'
- private loggedIn= new BehaviorSubject<boolean>(false)
+describe('AppComponent', () => {
+    let app:AppComponent
+  let fixture:ComponentFixture<AppComponent>
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        RouterModule.forRoot([])
+      ],
+      declarations: [
+        AppComponent
+      ],
+    }).compileComponents();
+  });
 
-  constructor(private http:HttpClient,private route:Router) { }
-  loginUser(userdata:any){
-      return this.http.post(this.API_URL,userdata).pipe(
-        tap((res:any)=>{
-          if(res.token){
-              console.log(res.token);
-              localStorage.setItem('token',res.token)
-              this.loggedIn.next(true)
-          }
-        })
-      )
-  }
-  getToken(){
-    return localStorage.getItem('token')
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
 
-  }
-  isLoggedIn(){
-    return this.loggedIn.asObservable()
-  }
-  checkToken(){
-    const token= this.getToken()
-    this.loggedIn.next(!!token)
-  }
-  getProtectedData():Observable<any>{
-      return this.http.get('http://localhost:3000/api/protected')
-  }
-}
+  it(`should have as title 'test-app'`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('test-app');
+  });
+
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, test-app');
+  });
+
+  it('check the array',()=>{
+    
+    app.users=[
+      {name:'admin'},{name:'manager'}
+    ]
+    fixture.detectChanges()
+    const container=fixture.nativeElement.querySelector('#user-container')
+    const listItems= container.querySelector('li')
+    expect(listItems.length).toBe(2)
+    expect(listItems[0].textContent).toContain('admin')
+      expect(listItems[1].textContent).toContain('manager')
+
+  })
+});
+----
+<h1>Hello, {{title}}</h1>
+
+
+
+<div id="user-container">
+<ul *ngIf="users.length >0; else nouser">
+    <li *ngFor="let user of users">{{user.name}}</li>
+</ul>
+</div>
+<ng-template #nouser>
+    <p>NO User Found</p>
+</ng-template>
